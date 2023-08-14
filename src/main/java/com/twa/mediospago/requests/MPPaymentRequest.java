@@ -12,7 +12,7 @@ import lombok.Setter;
 public class MPPaymentRequest {
     private Integer transactionAmount;
     private String token;
-    private CardTokenRequest card;
+    private MPCardTokenRequest card;
     private String description;
     private Integer installments;
     private String paymentMethodId;

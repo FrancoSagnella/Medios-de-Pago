@@ -6,14 +6,38 @@ import com.mercadopago.client.payment.PaymentCreateRequest;
 import com.mercadopago.client.payment.PaymentPayerRequest;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
+import com.mercadopago.resources.CardToken;
 import com.mercadopago.resources.payment.Payment;
+import com.twa.mediospago.requests.MPCardTokenRequest;
 import com.twa.mediospago.requests.MPPaymentRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.math.BigDecimal;
 
 @Service
 public class MercadoPagoService {
+    private final WebClient webClient;
+    public MercadoPagoService(WebClient webClient){
+        this.webClient = webClient;
+    }
+    @Value("${mercadopago.token}")
+    private String token;
+    @Value("${mercadopago.key}")
+    private String publickey;
+
+    public String createCardToken(MPCardTokenRequest cardParams) {
+
+        var response = webClient.post()
+                .uri("https://api.mercadopago.com/v1/card_tokens?public_key="+publickey)
+                .bodyValue(cardParams)
+                .retrieve()
+                .bodyToMono(CardToken.class)
+                .block();
+
+        return response.getId();
+    }
 
     ///Realiza el pago con los datos de la estructura MPPaymentRequest mediante el JDK de mercado pago
     public String createPayment(MPPaymentRequest payment) throws MPException, MPApiException {

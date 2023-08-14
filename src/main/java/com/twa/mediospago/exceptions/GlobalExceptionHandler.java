@@ -16,6 +16,13 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class GlobalExceptionHandler {
+    @ExceptionHandler(value = RuntimeException.class)
+    protected ResponseEntity<ErrorResponse> runtimeExceptionHandler(RuntimeException ex){
+        return new ResponseEntity<>(
+                new ErrorResponse("BAD_REQUEST",
+                        ex.getMessage(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(MPException.class)
     protected ResponseEntity<ErrorResponse> handleException(MPException exception) {
 
@@ -34,5 +41,41 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 new ErrorResponse("PAYMENT_REJECTED",
                         exception.getApiResponse().getContent(), LocalDateTime.now()), HttpStatusCode.valueOf(exception.getApiResponse().getStatusCode()));
+    }
+
+    @ExceptionHandler(DecidirPaymentRejectedException.class)
+    protected ResponseEntity<ErrorResponse> handleException(DecidirPaymentRejectedException exception) {
+//        log.error(exception.getMessage(), exception);
+
+        return new ResponseEntity<>(
+                new ErrorResponse("PAYMENT_REJECTED",
+                        exception.getMessage(), LocalDateTime.now()), HttpStatus.PAYMENT_REQUIRED);
+    }
+
+    @ExceptionHandler(DecidirBadRequestPaymentException.class)
+    protected ResponseEntity<ErrorResponse> handleException(DecidirBadRequestPaymentException exception) {
+//        log.error(exception.getMessage(), exception);
+
+        return new ResponseEntity<>(
+                new ErrorResponse("PAYMENT_ERROR",
+                        exception.getMessage(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DecidirBadRequestTokenException.class)
+    protected ResponseEntity<ErrorResponse> handleException(DecidirBadRequestTokenException exception) {
+//        log.error(exception.getMessage(), exception);
+
+        return new ResponseEntity<>(
+                new ErrorResponse("TOKEN_NOT_CREATED",
+                        exception.getMessage(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ServerErrorException.class)
+    protected ResponseEntity<ErrorResponse> handleException(ServerErrorException exception) {
+//        log.error(exception.getMessage(), exception);
+
+        return new ResponseEntity<>(
+                new ErrorResponse("DECIDIR_SERVER_ERROR",
+                        exception.getMessage(), LocalDateTime.now()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
