@@ -1,5 +1,8 @@
 package com.twa.mediospago;
 
+import com.mercadopago.MercadoPagoConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -10,4 +13,8 @@ public class MediosPagoApplication {
 		SpringApplication.run(MediosPagoApplication.class, args);
 	}
 
+	@Autowired
+	void loadCert(@Value("${mercadopago.token}") String tokenMP) {
+		MercadoPagoConfig.setAccessToken(tokenMP);
+	}
 }
