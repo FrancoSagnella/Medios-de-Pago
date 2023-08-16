@@ -8,6 +8,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -77,5 +79,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 new ErrorResponse("DECIDIR_SERVER_ERROR",
                         exception.getMessage(), LocalDateTime.now()), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    protected ResponseEntity<ErrorResponse> handleException(NotFoundException exception) {
+        return new ResponseEntity<>(
+                new ErrorResponse("NOT_FOUND",
+                        exception.getMessage(), LocalDateTime.now()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    protected ResponseEntity<ErrorResponse> handleException(MethodArgumentNotValidException exception) {
+        return new ResponseEntity<>(
+                new ErrorResponse("BAD_REQUEST",
+                        exception.getFieldError().getDefaultMessage(), LocalDateTime.now()), HttpStatus.BAD_REQUEST);
     }
 }
