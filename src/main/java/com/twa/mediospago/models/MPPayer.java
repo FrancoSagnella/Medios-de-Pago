@@ -9,5 +9,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class MPPayer {
     private String email;
-    private MPIdentification identification;
+    private Identification identification;
 }

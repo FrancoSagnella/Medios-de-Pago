@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class MPIdentification {
+public class Identification {
     private String type;
     private String number;
 }

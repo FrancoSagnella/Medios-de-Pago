@@ -1,12 +1,14 @@
 package com.twa.mediospago.requests;
 
 import com.twa.mediospago.models.MPCardHolder;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @Builder
 public class MPCardTokenRequest {
     private String cardNumber;

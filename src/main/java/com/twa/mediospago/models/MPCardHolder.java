@@ -9,5 +9,5 @@ import lombok.Setter;
 @Builder
 public class MPCardHolder {
     private String name;
-    private MPIdentification identification;
+    private Identification identification;
 }

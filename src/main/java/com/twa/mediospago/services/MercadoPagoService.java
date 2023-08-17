@@ -10,10 +10,11 @@ import com.mercadopago.exceptions.MPException;
 import com.mercadopago.resources.CardToken;
 import com.mercadopago.resources.payment.Payment;
 import com.mercadopago.resources.preference.Preference;
+import com.twa.mediospago.models.MPCardHolder;
 import com.twa.mediospago.models.MPNotification;
 import com.twa.mediospago.requests.MPCardTokenRequest;
 import com.twa.mediospago.requests.MPCheckoutProRequest;
-import com.twa.mediospago.requests.MPPaymentRequest;
+import com.twa.mediospago.requests.PaymentRequest;
 import com.twa.mediospago.responses.MPPaymentResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -47,17 +48,27 @@ public class MercadoPagoService {
     }
 
     ///Realiza el pago con los datos de la estructura MPPaymentRequest mediante el JDK de mercado pago
-    public String createPayment(MPPaymentRequest payment) throws MPException, MPApiException {
+    public String createPayment(PaymentRequest payment) throws MPException, MPApiException {
+        MPCardTokenRequest cardTokenRequest = MPCardTokenRequest.builder()
+                .cardNumber(payment.getCard_number())
+                .cardholder(MPCardHolder.builder().name(payment.getCard_holder_name()).identification(payment.getCard_holder_identification()).build())
+                .expirationMonth(payment.getCard_expiration_month())
+                .expirationYear(payment.getCard_expiration_year())
+                .securityCode(payment.getSecurity_code())
+                .build();
+
+        payment.setToken(createCardToken(cardTokenRequest));
+
         PaymentClient client = new PaymentClient();
 
         PaymentCreateRequest createRequest =
                 PaymentCreateRequest.builder()
-                        .transactionAmount(new BigDecimal(payment.getTransactionAmount()))
+                        .transactionAmount(new BigDecimal(payment.getAmount()))
                         .token(payment.getToken())
                         .description(payment.getDescription())
                         .installments(payment.getInstallments())
                         .binaryMode(true)
-                        .paymentMethodId(payment.getPaymentMethodId())
+                        .paymentMethodId(payment.getPayment_method_id())
                         .payer(PaymentPayerRequest.builder().email(payment.getPayer().getEmail())
                                 .identification(IdentificationRequest.builder()
                                         .type(payment.getPayer().getIdentification().getType())
