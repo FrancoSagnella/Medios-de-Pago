@@ -45,7 +45,7 @@ public class DecidirService {
 
         return response.getId();
     }
-    public DecidirPaymentResponse executePayment(PaymentRequest request){
+    public PaymentResponse executePayment(PaymentRequest request){
         // Creo el token
         DecidirCard tokenRequest = DecidirCard.builder()
                 .card_number(request.getCard_number())
@@ -83,6 +83,8 @@ public class DecidirService {
                 .bodyToMono(DecidirExecutePaymentResponse.class)
                 .block();
 
-        return new DecidirPaymentResponse(response.getId(), item.getSite_transaction_id(), response.getStatus(), response.getStatus_details());
+        //return new DecidirPaymentResponse(response.getId(), item.getSite_transaction_id(), response.getStatus(), response.getStatus_details());
+        return new PaymentResponse(response.getId(), // aca debería ir el id de nuestra BBDD
+                response.getId(), item.getPayment_method_id().toString(), response.getStatus());
     }
 }

@@ -5,7 +5,7 @@ import com.mercadopago.exceptions.MPException;
 import com.twa.mediospago.models.MPNotification;
 import com.twa.mediospago.requests.MPCheckoutProRequest;
 import com.twa.mediospago.requests.PaymentRequest;
-import com.twa.mediospago.responses.DecidirPaymentResponse;
+import com.twa.mediospago.responses.PaymentResponse;
 import com.twa.mediospago.services.DecidirService;
 import com.twa.mediospago.services.MercadoPagoService;
 import lombok.AllArgsConstructor;
@@ -46,7 +46,7 @@ public class PaymentController {
     //FALTARIA TODA LA LOGICA DE CREAR EL PAGO PARA TENER REGISTRADO EN LA BBDD PROPIA DE MEDIOS DE PAGO
     // Esta lógica debería estar en un servicio
     @PostMapping("/mp")
-    public ResponseEntity<String> executePayment(@RequestBody PaymentRequest payment) throws MPException, MPApiException {
+    public ResponseEntity<PaymentResponse> executePayment(@RequestBody PaymentRequest payment) throws MPException, MPApiException {
         var response = mercadoPagoService.createPayment(payment);
         //Aca deberia guardarse objeto payment
 
@@ -73,10 +73,10 @@ public class PaymentController {
 }
     */
     @PostMapping("/decidir")
-    public ResponseEntity<DecidirPaymentResponse> payment(@RequestBody PaymentRequest request) {
+    public ResponseEntity<PaymentResponse> payment(@RequestBody PaymentRequest request) {
         var response = decidirService.executePayment(request);
 
-        //Aca deberia guardarse el objeto payment
+        //Aca deberia guardarse el objeto payment. Sugerencia: hacerlo en sus servicio
 
         return ResponseEntity.ok(response);
     }

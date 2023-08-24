@@ -16,6 +16,7 @@ import com.twa.mediospago.requests.MPCardTokenRequest;
 import com.twa.mediospago.requests.MPCheckoutProRequest;
 import com.twa.mediospago.requests.PaymentRequest;
 import com.twa.mediospago.responses.MPPaymentResponse;
+import com.twa.mediospago.responses.PaymentResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -48,7 +49,7 @@ public class MercadoPagoService {
     }
 
     ///Realiza el pago con los datos de la estructura MPPaymentRequest mediante el JDK de mercado pago
-    public String createPayment(PaymentRequest payment) throws MPException, MPApiException {
+    public PaymentResponse createPayment(PaymentRequest payment) throws MPException, MPApiException {
         MPCardTokenRequest cardTokenRequest = MPCardTokenRequest.builder()
                 .cardNumber(payment.getCard_number())
                 .cardholder(MPCardHolder.builder().name(payment.getCard_holder_name()).identification(payment.getCard_holder_identification()).build())
@@ -76,9 +77,13 @@ public class MercadoPagoService {
                                 .build())
                         .build();
 
-        Payment paymentResponse = client.create(createRequest);
+        Payment response = client.create(createRequest);
 
-        return paymentResponse.getResponse().getContent();
+        PaymentResponse paymentResponse = new PaymentResponse(response.getId(), //Esta debería ser la id en nuestra BBDD
+                response.getId(), response.getPaymentMethodId(), response.getStatus());
+
+        return paymentResponse;
+        //return paymentResponse.getResponse().getContent();
     }
 
     public String createPreference(MPCheckoutProRequest item) throws MPException, MPApiException {
